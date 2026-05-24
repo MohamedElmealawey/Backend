@@ -12,7 +12,7 @@ const workSchema=new mongoose.Schema({
         trim:true
     },
      images: {
-        type: [Object], // Array of image objects
+        type: [Object],
         default: []
     },
     url:{
@@ -27,7 +27,7 @@ const workSchema=new mongoose.Schema({
         default:"frontend"
     },
     technologies: {
-        type: [String], // Array of technologies used
+        type: [String],
         default: []
     },
     githubUrl: {
