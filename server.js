@@ -9,21 +9,13 @@ require('dotenv').config();
 const connectDB = require('./DB/Connection');
 const app = express();
 
-app.use(cors({
-  origin: 'https://portofolio-frontend-8wp2jrulv-mohamedelmealaweys-projects.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
-app.options('*', cors());
 app.use('/api/contact', contactRouter);
 app.use('/api/work', workRouter);
 app.use('/api/login', adminRouter);
-
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
