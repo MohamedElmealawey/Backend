@@ -9,17 +9,17 @@ require('dotenv').config();
 const connectDB = require('./DB/Connection');
 
 const corsConfig = {
-  origin: "*",
-  credential: true,
-  methods: ["GET", "POST", "DELETE", "PUT"]
+  origin: ["http://localhost:5173", "https://portofolio-frontend-beryl.vercel.app"],
+  credentials: true,
+  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  optionsSuccessStatus: 200,
 }
 
 const app = express();
-app.options("*", cors(corsConfig));
 app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
 app.use('/api/contact', contactRouter);
@@ -32,17 +32,13 @@ app.use((err, req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello, Vercel!');
+  res.send('API is running!');
 });
 
 connectDB();
 connectCloudinary();
 
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 8000;
-  app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-  });
-}
-
-module.exports = app;
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
