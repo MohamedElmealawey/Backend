@@ -7,21 +7,19 @@ const adminRouter = require('./routes/AdminRoute');
 const connectCloudinary = require('./util/cloudinary');
 require('dotenv').config();
 const connectDB = require('./DB/Connection');
-
-const corsConfig = {
-  origin: ["http://localhost:5173", "https://portofolio-frontend-beryl.vercel.app"],
-  credentials: true,
-  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  optionsSuccessStatus: 200,
-}
-
 const app = express();
-app.use(cors(corsConfig));
+
+app.use(cors({
+  origin: 'https://portofolio-frontend-8wp2jrulv-mohamedelmealaweys-projects.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
-
+app.options('*', cors());
 app.use('/api/contact', contactRouter);
 app.use('/api/work', workRouter);
 app.use('/api/login', adminRouter);
