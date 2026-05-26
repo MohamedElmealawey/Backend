@@ -29,7 +29,8 @@ exports.createWork = async (req, res) => {
         }
 
         // Check for images
-        const images = req.files?.images || req.files?.image;
+        // upload.any() returns req.files as a flat array (not keyed by field name)
+        const images = Array.isArray(req.files) ? req.files : (req.files?.images || req.files?.image);
         if (!images || (Array.isArray(images) && images.length === 0)) {
             return res.status(400).send({
                 success: false,

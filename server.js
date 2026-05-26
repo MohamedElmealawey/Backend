@@ -8,10 +8,21 @@ const connectCloudinary = require('./util/cloudinary');
 require('dotenv').config();
 const connectDB = require('./DB/Connection');
 const app = express();
-
+ 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+ 
+// Only parse urlencoded bodies for non-multipart requests.
+// Applying express.urlencoded to multipart/form-data corrupts the stream
+// and causes Multer to throw "Unexpected field" even for valid field names.
+app.use((req, res, next) => {
+  const contentType = req.headers['content-type'] || '';
+  if (contentType.includes('multipart/form-data')) {
+    return next(); // let Multer handle it untouched
+  }
+  express.urlencoded({ extended: false })(req, res, next);
+});
+ 
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 app.use('/api/contact', contactRouter);
 app.use('/api/work', workRouter);
@@ -20,19 +31,15 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
 });
-
+ 
 app.get('/', (req, res) => {
   res.send('API is running!');
 });
-
+ 
 connectDB();
 connectCloudinary();
-
+ 
 const PORT = process.env.PORT || 8000;
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-  });
-}
-
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
